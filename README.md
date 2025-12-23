@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -57,3 +58,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+=======
+# task-list
+Built a Task List Web App in Laravel 11 that lets users add, edit, delete, and complete tasks. Focused on a clean, user-friendly interface, smooth forms, and reliable database handling for an efficient task management experience.
+>>>>>>> f362371c758557e8cd61a1b5d0f140a7bde1b738

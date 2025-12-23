@@ -100,3 +100,4 @@ return redirect()-> route('tasks.index')
 ->with('success', 'Task deleted Successfully!');
 
 })->name('tasks.destroy');
+    
