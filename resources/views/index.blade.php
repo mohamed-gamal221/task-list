@@ -1,111 +1,76 @@
 @extends('layouts.app')
 
-{{-- Page title --}}
-@section('title', 'The list of tasks')
-
-@section('styles')
-<style>
-/* Full page background */
-.task-page {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    justify-content: center;
-    padding-top: 40px;
-}
-
-/* White card */
-.task-container {
-    background: white;
-    max-width: 600px;
-    width: 100%;
-    padding: 24px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* Top navigation */
-.task-nav {
-    margin-bottom: 20px;
-    text-align: right;
-}
-
-/* Add task link */
-.add-task {
-    font-weight: 600;
-    text-decoration: underline;
-    color: #4f46e5;
-}
-
-/* Task item */
-.task-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-/* Completed task */
-.completed {
-    text-decoration: line-through;
-    color: #9ca3af;
-}
-
-/* Empty state */
-.empty-message {
-    color: #6b7280;
-    font-style: italic;
-    text-align: center;
-    padding: 20px 0;
-}
-
-/* Pagination */
-.pagination {
-    margin-top: 20px;
-}
-</style>
-@endsection
+{{-- Browser tab title --}}
+@section('title', 'My Task List')
 
 @section('content')
+<div class="max-w-2xl mx-auto py-8 px-4">
+    
+    {{-- Header Section: Title and Add Button --}}
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-extrabold text-stone-800 tracking-tight">My Tasks</h1>
+        
+        <a href="{{ route('tasks.create') }}" 
+           class="inline-flex items-center px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition shadow-lg shadow-amber-100 active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Task
+        </a>
+    </div>
 
-<div class="task-page">
-
-    <div class="task-container">
-
-        {{-- Navigation / Add task link --}}
-        <nav class="task-nav">
-            <a href="{{ route('tasks.create') }}" class="add-task">
-                + Add Task
-            </a>
-        </nav>
-
-        {{-- Loop through tasks --}}
+    {{-- Main Container Card --}}
+    <div class="bg-white rounded-2xl shadow-sm border-2 border-orange-50 overflow-hidden">
+        
+        {{-- Task Loop --}}
         @forelse ($tasks as $task)
+            <div class="group border-b border-orange-50 last:border-0">
+                <a href="{{ route('tasks.show', $task) }}" 
+                   class="flex items-center justify-between p-5 hover:bg-orange-50/50 transition duration-200">
+                    
+                    <div class="flex items-center gap-4">
+                        {{-- Status Dot --}}
+                        <div class="h-3 w-3 rounded-full {{ $task->completed ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse' }}"></div>
+                        
+                        {{-- Task Title --}}
+                        <span @class([
+                            'text-lg font-semibold transition-colors',
+                            'text-stone-700 group-hover:text-amber-700',
+                            'line-through text-stone-400' => $task->completed
+                        ])>
+                            {{ $task->title }}
+                        </span>
+                    </div>
 
-            <div class="task-item">
-                <a href="{{ route('tasks.show', $task) }}"
-                   @class([
-                        'font-bold',
-                        'completed' => $task->completed
-                   ])>
-                    {{ $task->title }}
+                    {{-- Right-side arrow icon --}}
+                    <div class="text-stone-300 group-hover:text-amber-500 transition-transform group-hover:translate-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" />
+                        </svg>
+                    </div>
                 </a>
             </div>
 
-        {{-- If no tasks exist --}}
+        {{-- Empty State --}}
         @empty
-            <div class="empty-message">
-                There are no tasks
+            <div class="p-12 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 text-orange-500 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                </div>
+                <p class="text-stone-500 font-medium">No tasks found. Time to relax or start something new!</p>
             </div>
         @endforelse
 
-        {{-- Pagination links --}}
-        @if ($tasks->count())
-            <nav class="pagination">
-                {{ $tasks->links() }}
-            </nav>
-        @endif
-
     </div>
 
-</div>
+    {{-- Pagination Section --}}
+    @if ($tasks->count())
+        <div class="mt-8 px-2">
+            {{ $tasks->links() }}
+        </div>
+    @endif
 
+</div>
 @endsection

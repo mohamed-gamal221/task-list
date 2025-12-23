@@ -1,219 +1,109 @@
 @extends('layouts.app')
 
-@section('title', 'View Task')
-
-@section('styles')
-<style>
-.page-bg {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.task-card {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 14px;
-    width: 100%;
-    max-width: 720px;
-    box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-}
-
-/* Sections */
-.task-section {
-    margin-bottom: 28px;
-}
-
-.section-label {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.task-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #111827;
-}
-
-.task-text {
-    font-size: 1rem;
-    color: #374151;
-    line-height: 1.7;
-}
-
-/* Status badge */
-.status-badge {
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-
-.status-completed {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.status-pending {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-/* Buttons */
-.actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-}
-
-button,
-.action-link {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.toggle {
-    background-color: #2563eb;
-    color: white;
-}
-
-.toggle:hover {
-    background-color: #1e40af;
-}
-
-.edit {
-    background-color: #f59e0b;
-    color: white;
-}
-
-.edit:hover {
-    background-color: #d97706;
-}
-
-.delete {
-    background-color: #dc2626;
-    color: white;
-}
-
-.delete:hover {
-    background-color: #b91c1c;
-}
-
-.back {
-    background-color: #6b7280;
-    color: white;
-}
-
-.back:hover {
-    background-color: #4b5563;
-}
-
-/* Flash message */
-.flash-success {
-    background-color: #dcfce7;
-    color: #166534;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-</style>
-</style>
-@endsection
+{{-- 
+    SEO & Accessibility: Set the page title dynamically. 
+    Experienced devs always ensure the tab name matches the content. 
+--}}
+@section('title', $task->title)
 
 @section('content')
-<div class="page-bg">
-    <div class="task-card">
+  {{-- Main Container: max-width for readability on large screens --}}
+  <div class="max-w-2xl mx-auto py-8 px-4">
+    
+    {{-- Navigation Header --}}
+    <nav class="mb-8">
+        <a href="{{ route('tasks.index') }}" 
+           class="flex items-center text-amber-700 hover:text-amber-900 transition-colors duration-200 font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="Arrow-Left-Path..." />
+            </svg>
+            ← Back to all tasks
+        </a>
+    </nav>
 
-        {{-- Flash message --}}
-        @if (session('success'))
-            <div class="flash-success">
-                {{ session('success') }}
+    {{-- Task Main Card --}}
+    <div class="bg-white rounded-2xl shadow-sm border-2 border-orange-50 overflow-hidden">
+        
+        {{-- Card Header: Task Title and Status --}}
+        <div class="p-8 pb-4 border-b border-orange-50 bg-orange-50/30">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h1 class="text-4xl font-extrabold text-stone-800 tracking-tight">
+                    {{ $task->title }}
+                </h1>
+                
+                {{-- Status Badge: Using warm Greens/Ambers --}}
+                @if($task->completed)
+                    <span class="inline-flex items-center px-4 py-1 rounded-full text-sm font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                        ✨ Task Finished
+                    </span>
+                @else
+                    <span class="inline-flex items-center px-4 py-1 rounded-full text-sm font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                        ⏳ Work in Progress
+                    </span>
+                @endif
             </div>
-        @endif
-
-        {{-- Title --}}
-        <div class="task-section">
-            <div class="section-label">Title</div>
-            <div class="task-title">{{ $task->title }}</div>
         </div>
 
-        {{-- Created At --}}
+        {{-- Card Body: Descriptions --}}
+        <div class="p-8 space-y-6">
+            <div>
+                <h3 class="text-xs uppercase tracking-widest text-stone-400 font-bold mb-2">Short Summary</h3>
+                <p class="text-xl text-stone-700 leading-relaxed font-medium">
+                    {{ $task->description }}
+                </p>
+            </div>
 
-        <div class="task-section">
-            <p class="section-label">Created at</p>
-            <p class="task-text">
-        {{ $task->created_at->format('F d, Y · h:i A') }}
-        </p>
-</div>
-
-
-
-
-        
-        
-
-        {{-- Description --}}
-        <div class="task-section">
-            <div class="section-label">Description</div>
-            <p class="task-text">{{ $task->description }}</p>
+            @if ($task->long_description)
+                <div class="bg-stone-50 p-6 rounded-xl border-l-4 border-orange-200">
+                    <h3 class="text-xs uppercase tracking-widest text-stone-400 font-bold mb-2">Detailed Notes</h3>
+                    <p class="text-stone-600 leading-relaxed">
+                        {{ $task->long_description }}
+                    </p>
+                </div>
+            @endif
         </div>
 
-        {{-- Long Description --}}
-        @if ($task->long_description)
-            <div class="task-section">
-                <div class="section-label">Long Description</div>
-                <p class="task-text">{{ $task->long_description }}</p>
+        {{-- Card Footer: Timestamps formatted for humans --}}
+        <div class="px-8 py-4 bg-stone-50/50 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-stone-400 uppercase">
+            <div class="flex items-center">
+                📅 Created {{ $task->created_at->format('M d, Y') }} 
+                <span class="ml-1 text-stone-300">({{ $task->created_at->diffForHumans() }})</span>
             </div>
-        @endif
+            <div class="flex items-center">
+                🔄 Last update: {{ $task->updated_at->diffForHumans() }}
+            </div>
+        </div>
+    </div>
 
-        {{-- Status --}}
-        <p class="status {{ $task->completed ? 'completed' : 'not-completed' }}">
-            {{ $task->completed ? 'Completed ✅' : 'Not completed ❌' }}
-        </p>
+    {{-- Action Bar: Grouped buttons with warm, distinct colors --}}
+    <div class="mt-8 flex flex-wrap items-center justify-center sm:justify-start gap-4">
+        
+        {{-- 1. Edit Button (Amber/Gold) --}}
+        <a href="{{ route('tasks.edit', ['task' => $task]) }}" 
+           class="inline-flex items-center px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-amber-200 active:scale-95">
+            Edit Details
+        </a>
 
-        {{-- Toggle completed --}}
-        <form method="POST" action="{{ route('tasks.toggle', $task) }}">
+        {{-- 2. Toggle Status Button (Sunset Orange) --}}
+        <form method="POST" action="{{ route('tasks.toggle-complete', ['task' => $task]) }}">
             @csrf
-            @method('PATCH')
-            <button class="toggle" type="submit">
-                {{ $task->completed ? 'Mark as incomplete' : 'Mark as completed' }}
+            @method('PUT')
+            <button type="submit" 
+                class="inline-flex items-center px-6 py-3 bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold rounded-xl transition-all active:scale-95">
+                Mark as {{ $task->completed ? 'Not Finished' : 'Complete' }}
             </button>
         </form>
 
-        {{-- Actions --}}
-        <div class="actions">
-            <a href="{{ route('tasks.edit', $task) }}" class="button edit">Edit</a>
-
-            <form method="POST" action="{{ route('tasks.destroy', $task) }}">
-                @csrf
-                @method('DELETE')
-                <button class="delete" type="submit"
-                        onclick="return confirm('Are you sure you want to delete this task?')">
-                    Delete
-                </button>
-            </form>
-
-            <a href="{{ route('tasks.index') }}" class="button back">Back to tasks</a>
-        </div>
-
+        {{-- 3. Delete Action (Soft Rose/Red for warning but still warm) --}}
+        <form action="{{ route('tasks.destroy', ['task' => $task]) }}" method="POST" 
+              onsubmit="return confirm('Wait! Are you sure you want to delete this task?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" 
+                class="inline-flex items-center px-6 py-3 text-rose-500 hover:text-rose-700 font-bold underline underline-offset-4 transition-colors">
+                Remove Task
+            </button>
+        </form>
     </div>
-</div>
+  </div>
 @endsection

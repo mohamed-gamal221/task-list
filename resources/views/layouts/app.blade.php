@@ -1,50 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
-    <title> Laravel 10 Task List app </title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    @yield('styles')
-
-    @if (session('success'))
-    <div style="
-        background: #d1fae5;
-        color: #065f46;
-        padding: 10px 16px;
-        margin: 16px auto;
-        max-width: 600px;
-        border-radius: 6px;
-        text-align: center;
-        font-weight: 600;
-    ">
-        {{ session('success') }}
-    </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{-- Browser tab title --}}
+    <title>@yield('title', 'Task List App')</title>
     
-@endif
+    {{-- Tailwind CSS CDN --}}
+    <script src="https://cdn.tailwindcss.com"></script>
 
-
-
-
-
-
-
+    {{-- Custom styles for child pages --}}
+    @yield('styles')
 </head>
 
+{{-- Warm background color for the entire site --}}
+<body class="bg-stone-50 min-h-screen text-stone-800 antialiased">
 
+    <div class="container mx-auto">
+        
+        {{-- Success Flash Message --}}
+        @if (session('success'))
+            <div id="flash-message" class="fixed top-4 right-4 z-50 max-w-md">
+                <div class="bg-emerald-100 border-2 border-emerald-200 text-emerald-800 px-6 py-4 rounded-2xl shadow-lg flex items-center gap-3">
+                    <span class="text-xl">✨</span>
+                    <p class="font-bold tracking-tight">{{ session('success') }}</p>
+                </div>
+            </div>
 
-<body> 
+            {{-- Script to make the message disappear after 3 seconds --}}
+            <script>
+                setTimeout(() => {
+                    document.getElementById('flash-message').style.display = 'none';
+                }, 3000);
+            </script>
+        @endif
 
-    <h1 class="mb-4 text-2xl">@yield('title')</h1>
-
-    {{-- @if (session()->has('success'))
-    <divs>{{ session('success')}}</div>
-    @endif  --}}
-    <div>
-   @yield('content')
-
-</div>
+        {{-- Main Content Injection --}}
+        <main>
+            @yield('content')
+        </main>
+        
+    </div>
 
 </body>
-
 </html>
