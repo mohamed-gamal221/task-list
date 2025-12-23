@@ -6,32 +6,55 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Redirects
+|--------------------------------------------------------------------------
+*/
 
+// Redirect the root URL to the tasks index
 Route::get('/', function () {
     return redirect()->route('tasks.index');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Task Display Routes (GET)
+|--------------------------------------------------------------------------
+*/
+
+// Display the list of all tasks (paginated)
 Route::get('/tasks', function () {
     return view('index', [
         'tasks' => Task::latest()->paginate(10)
     ]);
 })->name('tasks.index');
 
+// Display the form to create a new task
 Route::view('/tasks/create', 'create')
     ->name('tasks.create');
 
+// Display the form to edit an existing task
 Route::get('/tasks/{task}/edit', function (Task $task) {
     return view('edit', [
         'task' => $task
     ]);
 })->name('tasks.edit');
 
+// Display a single specific task
 Route::get('/tasks/{task}', function (Task $task) {
     return view('show', [
         'task' => $task
     ]);
 })->name('tasks.show');
 
+/*
+|--------------------------------------------------------------------------
+| Task Action Routes (POST/PUT/DELETE)
+|--------------------------------------------------------------------------
+*/
+
+// Store a new task in the database
 Route::post('/tasks', function (TaskRequest $request) {
     $task = Task::create($request->validated());
 
@@ -39,6 +62,7 @@ Route::post('/tasks', function (TaskRequest $request) {
         ->with('success', 'Task created successfully!');
 })->name('tasks.store');
 
+// Update an existing task in the database
 Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) {
     $task->update($request->validated());
 
@@ -46,6 +70,7 @@ Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) {
         ->with('success', 'Task updated successfully!');
 })->name('tasks.update');
 
+// Delete a task from the database
 Route::delete('/tasks/{task}', function (Task $task) {
     $task->delete();
 
@@ -53,9 +78,9 @@ Route::delete('/tasks/{task}', function (Task $task) {
         ->with('success', 'Task deleted successfully!');
 })->name('tasks.destroy');
 
+// Toggle the completed status of a task
 Route::put('tasks/{task}/toggle-complete', function (Task $task) {
     $task->toggleComplete();
 
     return redirect()->back()->with('success', 'Task updated successfully!');
 })->name('tasks.toggle-complete');
-
